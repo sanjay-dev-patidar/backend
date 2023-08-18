@@ -10,7 +10,6 @@ const port = process.env.PORT || 5000;
 
 // Connect to MongoDB (mydb)
 const mongoURIMyDB = process.env.MONGODB_URI_MYDB;
-const mongoURIMyBlogs = process.env.MONGODB_URI_MYBLOGS;
 
 mongoose.connect(mongoURIMyDB, {
   useNewUrlParser: true,
@@ -23,18 +22,7 @@ mongoose.connect(mongoURIMyDB, {
   console.error('Error connecting to MongoDB (mydb):', error);
 });
 
-mongoose.connect(mongoURIMyBlogs, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => {
-  console.log('Connected to MongoDB (myblogs)');
-})
-.catch(error => {
-  console.error('Error connecting to MongoDB (myblogs):', error);
-});
-
-// Models for all collections
+// Models for 'ageofai', 'devtools', 'webdev', 'road', 'tools', and 'working' collections
 const AgeOfAI = mongoose.model('ageofai', {
   title: String,
   overview: [String],
@@ -72,14 +60,6 @@ const Tools = mongoose.model('tools', {
   imageURL: [String],
 });
 
-const Working = mongoose.model('working', {
-  title: String,
-  overview: String,
-  description: String,
-  keypoints: [String],
-  imageURL: [String],
-});
-
 // Routes for all collections
 app.get('/api/:collection', async (req, res) => {
   const collection = req.params.collection;
@@ -99,10 +79,12 @@ app.get('/api/:collection', async (req, res) => {
         data = await Road.find().lean();
         break;
       case 'tools':
+        // Using the same collection for both 'tools' and 'working'
         data = await Tools.find().lean();
         break;
       case 'working':
-        data = await Working.find().lean();
+        // Using the same collection for both 'tools' and 'working'
+        data = await Tools.find().lean();
         break;
       default:
         return res.status(404).json({ error: 'Collection not found' });
