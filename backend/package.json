@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+   "engines": {
+    "node": "18.17.1"
+  },
   "scripts": {
     "start": "node backend/server.cjs",
     "deploy": "yarn start",
