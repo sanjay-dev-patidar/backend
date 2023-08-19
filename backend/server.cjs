@@ -21,6 +21,8 @@ mongoose.connect(mongoURIMyDB, {
 .catch(error => {
   console.error('Error connecting to MongoDB (mydb):', error);
 });
+
+// Models for 'ageofai', 'devtools', 'webdev', 'road', 'tools', and 'working' collections
 const AgeOfAI = mongoose.model('ageofai', {
   title: String,
   overview: [String],
@@ -50,44 +52,56 @@ const Road = mongoose.model('road', {
   keypoints: [String],
 });
 
-// Models for 'tools' and 'working' collections
 const Tools = mongoose.model('tools', {
   title: String,
-  overview: String,
-  description: String,
+  overview: [String],
+  description: [String],
   keypoints: [String],
   imageURL: [String],
 });
-
 const Working = mongoose.model('working', {
   title: String,
-  overview: String,
-  description: String,
+  overview: [String],
+  description: [String],
   keypoints: [String],
   imageURL: [String],
   videoURL: [String],
 });
 
-// Routes for 'tools' and 'working' collections
-app.get('/api/tools', async (req, res) => {
+// Routes for all collections
+app.get('/api/:collection', async (req, res) => {
+  const collection = req.params.collection;
   try {
-    const toolsData = await Tools.find().lean();
-    console.log('Data fetched successfully from "tools" collection:', toolsData);
-    res.json(toolsData);
+    let data;
+    switch (collection) {
+      case 'ageofai':
+        data = await AgeOfAI.find().lean();
+        break;
+      case 'devtools':
+        data = await DevTools.find().lean();
+        break;
+      case 'webdev':
+        data = await WebDev.find().lean();
+        break;
+      case 'road':
+        data = await Road.find().lean();
+        break;
+      case 'tools':
+     
+        data = await Tools.find().lean();
+        break;
+      case 'working':
+     
+        data = await Working.find().lean();
+        break;
+      default:
+        return res.status(404).json({ error: 'Collection not found' });
+    }
+    console.log('Data fetched successfully from', collection, 'collection:', data);
+    res.json(data);
   } catch (error) {
-    console.error('Error fetching data from "tools" collection:', error);
-    res.status(500).json({ error: 'Error fetching data from "tools" collection' });
-  }
-});
-
-app.get('/api/working', async (req, res) => {
-  try {
-    const workingData = await Working.find().lean();
-    console.log('Data fetched successfully from "working" collection:', workingData);
-    res.json(workingData);
-  } catch (error) {
-    console.error('Error fetching data from "working" collection:', error);
-    res.status(500).json({ error: 'Error fetching data from "working" collection' });
+    console.error(`Error fetching data from ${collection} collection:`, error);
+    res.status(500).json({ error: `Error fetching data from ${collection} collection` });
   }
 });
 
