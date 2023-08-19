@@ -58,6 +58,7 @@ const Tools = mongoose.model('tools', {
   description: [String],
   keypoints: [String],
   imageURL: [String],
+  videoURL: [String],
 });
 const Working = mongoose.model('working', {
   title: String,
